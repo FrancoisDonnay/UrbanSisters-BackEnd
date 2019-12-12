@@ -1,0 +1,13 @@
+D:\francois\Documents\Ecole\IG-B3\backend\UrbanSisters\Dal\bin\Release\netcoreapp3.0\Dal.deps.json
+D:\francois\Documents\Ecole\IG-B3\backend\UrbanSisters\Dal\bin\Release\netcoreapp3.0\Dal.runtimeconfig.json
+D:\francois\Documents\Ecole\IG-B3\backend\UrbanSisters\Dal\bin\Release\netcoreapp3.0\Dal.runtimeconfig.dev.json
+D:\francois\Documents\Ecole\IG-B3\backend\UrbanSisters\Dal\bin\Release\netcoreapp3.0\Dal.dll
+D:\francois\Documents\Ecole\IG-B3\backend\UrbanSisters\Dal\bin\Release\netcoreapp3.0\Dal.pdb
+D:\francois\Documents\Ecole\IG-B3\backend\UrbanSisters\Dal\obj\Release\netcoreapp3.0\Dal.csprojAssemblyReference.cache
+D:\francois\Documents\Ecole\IG-B3\backend\UrbanSisters\Dal\obj\Release\netcoreapp3.0\Dal.AssemblyInfoInputs.cache
+D:\francois\Documents\Ecole\IG-B3\backend\UrbanSisters\Dal\obj\Release\netcoreapp3.0\Dal.AssemblyInfo.cs
+D:\francois\Documents\Ecole\IG-B3\backend\UrbanSisters\Dal\obj\Release\netcoreapp3.0\Dal.csproj.CopyComplete
+D:\francois\Documents\Ecole\IG-B3\backend\UrbanSisters\Dal\obj\Release\netcoreapp3.0\Dal.dll
+D:\francois\Documents\Ecole\IG-B3\backend\UrbanSisters\Dal\obj\Release\netcoreapp3.0\Dal.pdb
+D:\francois\Documents\Ecole\IG-B3\backend\UrbanSisters\Dal\bin\Release\netcoreapp3.0\Model.dll
+D:\francois\Documents\Ecole\IG-B3\backend\UrbanSisters\Dal\bin\Release\netcoreapp3.0\Model.pdb

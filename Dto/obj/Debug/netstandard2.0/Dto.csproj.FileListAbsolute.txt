@@ -1,0 +1,8 @@
+D:\francois\Documents\Ecole\IG-B3\backend\UrbanSisters\Dto\bin\Debug\netstandard2.0\Dto.deps.json
+D:\francois\Documents\Ecole\IG-B3\backend\UrbanSisters\Dto\bin\Debug\netstandard2.0\Dto.dll
+D:\francois\Documents\Ecole\IG-B3\backend\UrbanSisters\Dto\bin\Debug\netstandard2.0\Dto.pdb
+D:\francois\Documents\Ecole\IG-B3\backend\UrbanSisters\Dto\obj\Debug\netstandard2.0\Dto.csprojAssemblyReference.cache
+D:\francois\Documents\Ecole\IG-B3\backend\UrbanSisters\Dto\obj\Debug\netstandard2.0\Dto.AssemblyInfoInputs.cache
+D:\francois\Documents\Ecole\IG-B3\backend\UrbanSisters\Dto\obj\Debug\netstandard2.0\Dto.AssemblyInfo.cs
+D:\francois\Documents\Ecole\IG-B3\backend\UrbanSisters\Dto\obj\Debug\netstandard2.0\Dto.dll
+D:\francois\Documents\Ecole\IG-B3\backend\UrbanSisters\Dto\obj\Debug\netstandard2.0\Dto.pdb
