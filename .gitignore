@@ -3,3 +3,12 @@
 ################################################################################
 
 /.vs
+/Api/bin/
+/Api/obj/
+/Api/Properties/
+/Dal/bin/
+/Dal/obj/
+/Dto/bin/
+/Dto/obj/
+/Model/bin/
+/Model/obj/
