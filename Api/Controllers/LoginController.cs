@@ -29,7 +29,7 @@ namespace UrbanSisters.Api.Controllers
 
         // POST: /login
         [HttpPost]
-        public async Task<IActionResult> LoginAsync([FromBody] Dto.LoginModel loginModel)
+        public async Task<IActionResult> LoginAsync([FromBody] Dto.Login loginModel)
         {
             if (!ModelState.IsValid)
             {

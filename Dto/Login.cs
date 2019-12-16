@@ -2,7 +2,7 @@
 
 namespace UrbanSisters.Dto
 {
-    public class LoginModel
+    public class Login
     {
         [Required]
         public string Email { get; set; }

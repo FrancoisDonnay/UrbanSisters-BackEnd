@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using UrbanSisters.Api.Hubs;
 using Microsoft.OpenApi.Models;
+using AutoMapper;
 
 namespace UrbanSisters.Api
 {
@@ -30,6 +31,12 @@ namespace UrbanSisters.Api
             {
                 options.UseSqlServer(Configuration["ConnectionString"]);
             });
+
+            services.AddSingleton(new MapperConfiguration(mc => 
+            {
+                mc.CreateMap<Dto.UserInscription, Model.User>();
+                mc.CreateMap<Model.User, Dto.User>();
+            }).CreateMapper());
 
             SymmetricSecurityKey _signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["SecretSignatureKey"]));
 
