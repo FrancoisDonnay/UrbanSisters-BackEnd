@@ -1,23 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\francois\\Documents\\Ecole\\IG-B3\\backend\\UrbanSisters\\Api\\Api.csproj": {}
+    "D:\\IG\\API\\UrbanSisters-BackEnd\\Api\\Api.csproj": {}
   },
   "projects": {
-    "D:\\francois\\Documents\\Ecole\\IG-B3\\backend\\UrbanSisters\\Api\\Api.csproj": {
+    "D:\\IG\\API\\UrbanSisters-BackEnd\\Api\\Api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\francois\\Documents\\Ecole\\IG-B3\\backend\\UrbanSisters\\Api\\Api.csproj",
+        "projectUniqueName": "D:\\IG\\API\\UrbanSisters-BackEnd\\Api\\Api.csproj",
         "projectName": "Api",
-        "projectPath": "D:\\francois\\Documents\\Ecole\\IG-B3\\backend\\UrbanSisters\\Api\\Api.csproj",
-        "packagesPath": "C:\\Users\\francois\\.nuget\\packages\\",
-        "outputPath": "D:\\francois\\Documents\\Ecole\\IG-B3\\backend\\UrbanSisters\\Api\\obj\\",
+        "projectPath": "D:\\IG\\API\\UrbanSisters-BackEnd\\Api\\Api.csproj",
+        "packagesPath": "C:\\Users\\ninte\\.nuget\\packages\\",
+        "outputPath": "D:\\IG\\API\\UrbanSisters-BackEnd\\Api\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
-          "C:\\Users\\francois\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\ninte\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -30,14 +27,14 @@
         "frameworks": {
           "netcoreapp3.0": {
             "projectReferences": {
-              "D:\\francois\\Documents\\Ecole\\IG-B3\\backend\\UrbanSisters\\Dal\\Dal.csproj": {
-                "projectPath": "D:\\francois\\Documents\\Ecole\\IG-B3\\backend\\UrbanSisters\\Dal\\Dal.csproj"
+              "D:\\IG\\API\\UrbanSisters-BackEnd\\Dal\\Dal.csproj": {
+                "projectPath": "D:\\IG\\API\\UrbanSisters-BackEnd\\Dal\\Dal.csproj"
               },
-              "D:\\francois\\Documents\\Ecole\\IG-B3\\backend\\UrbanSisters\\Dto\\Dto.csproj": {
-                "projectPath": "D:\\francois\\Documents\\Ecole\\IG-B3\\backend\\UrbanSisters\\Dto\\Dto.csproj"
+              "D:\\IG\\API\\UrbanSisters-BackEnd\\Dto\\Dto.csproj": {
+                "projectPath": "D:\\IG\\API\\UrbanSisters-BackEnd\\Dto\\Dto.csproj"
               },
-              "D:\\francois\\Documents\\Ecole\\IG-B3\\backend\\UrbanSisters\\Model\\Model.csproj": {
-                "projectPath": "D:\\francois\\Documents\\Ecole\\IG-B3\\backend\\UrbanSisters\\Model\\Model.csproj"
+              "D:\\IG\\API\\UrbanSisters-BackEnd\\Model\\Model.csproj": {
+                "projectPath": "D:\\IG\\API\\UrbanSisters-BackEnd\\Model\\Model.csproj"
               }
             }
           }
@@ -92,6 +89,16 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[3.0.1, 3.0.1]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.win-x64",
+              "version": "[3.0.1, 3.0.1]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -100,24 +107,21 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.100\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\francois\\Documents\\Ecole\\IG-B3\\backend\\UrbanSisters\\Dal\\Dal.csproj": {
+    "D:\\IG\\API\\UrbanSisters-BackEnd\\Dal\\Dal.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\francois\\Documents\\Ecole\\IG-B3\\backend\\UrbanSisters\\Dal\\Dal.csproj",
+        "projectUniqueName": "D:\\IG\\API\\UrbanSisters-BackEnd\\Dal\\Dal.csproj",
         "projectName": "Dal",
-        "projectPath": "D:\\francois\\Documents\\Ecole\\IG-B3\\backend\\UrbanSisters\\Dal\\Dal.csproj",
-        "packagesPath": "C:\\Users\\francois\\.nuget\\packages\\",
-        "outputPath": "D:\\francois\\Documents\\Ecole\\IG-B3\\backend\\UrbanSisters\\Dal\\obj\\",
+        "projectPath": "D:\\IG\\API\\UrbanSisters-BackEnd\\Dal\\Dal.csproj",
+        "packagesPath": "C:\\Users\\ninte\\.nuget\\packages\\",
+        "outputPath": "D:\\IG\\API\\UrbanSisters-BackEnd\\Dal\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
-          "C:\\Users\\francois\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\ninte\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -130,8 +134,8 @@
         "frameworks": {
           "netcoreapp3.0": {
             "projectReferences": {
-              "D:\\francois\\Documents\\Ecole\\IG-B3\\backend\\UrbanSisters\\Model\\Model.csproj": {
-                "projectPath": "D:\\francois\\Documents\\Ecole\\IG-B3\\backend\\UrbanSisters\\Model\\Model.csproj"
+              "D:\\IG\\API\\UrbanSisters-BackEnd\\Model\\Model.csproj": {
+                "projectPath": "D:\\IG\\API\\UrbanSisters-BackEnd\\Model\\Model.csproj"
               }
             }
           }
@@ -170,29 +174,32 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[3.0.1, 3.0.1]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.100\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\francois\\Documents\\Ecole\\IG-B3\\backend\\UrbanSisters\\Dto\\Dto.csproj": {
+    "D:\\IG\\API\\UrbanSisters-BackEnd\\Dto\\Dto.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\francois\\Documents\\Ecole\\IG-B3\\backend\\UrbanSisters\\Dto\\Dto.csproj",
+        "projectUniqueName": "D:\\IG\\API\\UrbanSisters-BackEnd\\Dto\\Dto.csproj",
         "projectName": "Dto",
-        "projectPath": "D:\\francois\\Documents\\Ecole\\IG-B3\\backend\\UrbanSisters\\Dto\\Dto.csproj",
-        "packagesPath": "C:\\Users\\francois\\.nuget\\packages\\",
-        "outputPath": "D:\\francois\\Documents\\Ecole\\IG-B3\\backend\\UrbanSisters\\Dto\\obj\\",
+        "projectPath": "D:\\IG\\API\\UrbanSisters-BackEnd\\Dto\\Dto.csproj",
+        "packagesPath": "C:\\Users\\ninte\\.nuget\\packages\\",
+        "outputPath": "D:\\IG\\API\\UrbanSisters-BackEnd\\Dto\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
-          "C:\\Users\\francois\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\ninte\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -237,24 +244,21 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.100\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\francois\\Documents\\Ecole\\IG-B3\\backend\\UrbanSisters\\Model\\Model.csproj": {
+    "D:\\IG\\API\\UrbanSisters-BackEnd\\Model\\Model.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\francois\\Documents\\Ecole\\IG-B3\\backend\\UrbanSisters\\Model\\Model.csproj",
+        "projectUniqueName": "D:\\IG\\API\\UrbanSisters-BackEnd\\Model\\Model.csproj",
         "projectName": "Model",
-        "projectPath": "D:\\francois\\Documents\\Ecole\\IG-B3\\backend\\UrbanSisters\\Model\\Model.csproj",
-        "packagesPath": "C:\\Users\\francois\\.nuget\\packages\\",
-        "outputPath": "D:\\francois\\Documents\\Ecole\\IG-B3\\backend\\UrbanSisters\\Model\\obj\\",
+        "projectPath": "D:\\IG\\API\\UrbanSisters-BackEnd\\Model\\Model.csproj",
+        "packagesPath": "C:\\Users\\ninte\\.nuget\\packages\\",
+        "outputPath": "D:\\IG\\API\\UrbanSisters-BackEnd\\Model\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
-          "C:\\Users\\francois\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\ninte\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -295,7 +299,7 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.100\\RuntimeIdentifierGraph.json"
         }
       }
     }
