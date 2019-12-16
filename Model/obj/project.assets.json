@@ -30,7 +30,7 @@
   },
   "libraries": {
     "Microsoft.NETCore.Platforms/1.1.0": {
-      "sha512": "bLpT1f/SFlO1CzqXG12KnJzpZs6lv24uX2Rzi4Fmm0noJpNlnWRVryuO3yK18Ca04t/YHcO1e1Z0WDfjseqNzw==",
+      "sha512": "kz0PEW2lhqygehI/d6XsPCQzD7ff7gUJaVGPVETX611eadGsA3A877GdSlU0LRVMCTH/+P3o2iDTak+S08V2+A==",
       "type": "package",
       "path": "microsoft.netcore.platforms/1.1.0",
       "files": [
@@ -179,23 +179,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\francois\\.nuget\\packages\\": {},
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+    "C:\\Users\\ninte\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\francois\\Documents\\Ecole\\IG-B3\\backend\\UrbanSisters\\Model\\Model.csproj",
+      "projectUniqueName": "D:\\IG\\API\\UrbanSisters-BackEnd\\Model\\Model.csproj",
       "projectName": "Model",
-      "projectPath": "D:\\francois\\Documents\\Ecole\\IG-B3\\backend\\UrbanSisters\\Model\\Model.csproj",
-      "packagesPath": "C:\\Users\\francois\\.nuget\\packages\\",
-      "outputPath": "D:\\francois\\Documents\\Ecole\\IG-B3\\backend\\UrbanSisters\\Model\\obj\\",
+      "projectPath": "D:\\IG\\API\\UrbanSisters-BackEnd\\Model\\Model.csproj",
+      "packagesPath": "C:\\Users\\ninte\\.nuget\\packages\\",
+      "outputPath": "D:\\IG\\API\\UrbanSisters-BackEnd\\Model\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-      ],
       "configFilePaths": [
-        "C:\\Users\\francois\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\ninte\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -236,7 +232,7 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.0.100\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.100\\RuntimeIdentifierGraph.json"
       }
     }
   }

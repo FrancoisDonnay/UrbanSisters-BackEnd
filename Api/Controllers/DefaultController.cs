@@ -13,7 +13,7 @@ namespace UrbanSisters.Api.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            return Ok("UrbanSisters by Gilles et Fransçois");
+            return Ok("UrbanSisters by Gilles et François");
         }
 
     }
