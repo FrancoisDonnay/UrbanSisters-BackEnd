@@ -12,3 +12,5 @@
 /Dto/obj/
 /Model/bin/
 /Model/obj/
+/.idea/
+/Api/Api.csproj.user
