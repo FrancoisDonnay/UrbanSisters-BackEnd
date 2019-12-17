@@ -12,5 +12,7 @@
 /Dto/obj/
 /Model/bin/
 /Model/obj/
+/.idea/.gitignore
+.idea/.idea.UrbanSisters
 /.idea/
 /Api/Api.csproj.user
