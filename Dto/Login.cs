@@ -5,6 +5,7 @@ namespace UrbanSisters.Dto
     public class Login
     {
         [Required]
+        [EmailAddress]
         public string Email { get; set; }
 
         [Required]

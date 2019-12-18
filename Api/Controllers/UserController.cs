@@ -12,7 +12,7 @@ namespace UrbanSisters.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    
     public class UserController : ControllerBase
     {
         private readonly UrbanSisterContext _context;
@@ -26,12 +26,14 @@ namespace UrbanSisters.Api.Controllers
 
         // GET: /user
         [HttpGet]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         public IActionResult Get()
         {
             return Ok(_context.User.ToArray().Select(user => _mapper.Map<Dto.User>(user)));
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public IActionResult inscription([FromBody] Dto.UserInscription userInscription)
         {
             if (!ModelState.IsValid)

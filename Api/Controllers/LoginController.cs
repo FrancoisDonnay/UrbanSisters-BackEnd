@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -44,16 +45,16 @@ namespace UrbanSisters.Api.Controllers
                 return Unauthorized();
             }
 
-            var claims = new[]
+            IEnumerable<Claim> claims = new List<Claim>(new []
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, await _jwtOptions.JtiGenerator()),
                 new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(_jwtOptions.IssuedAt).ToString(), ClaimValueTypes.Integer64)
-            };
-
+            });
+            
             if(user.IsAdmin)
             {
-                claims.Union(new[]
+                claims = claims.Union(new[]
                 {
                     new Claim(ClaimTypes.Role, "admin")
                 });
@@ -61,8 +62,8 @@ namespace UrbanSisters.Api.Controllers
 
             if(user.Relookeuse != null)
             {
-                claims.Union(new[]
-                   {
+                claims = claims.Union(new[]
+                {
                     new Claim(ClaimTypes.Role, "relookeuse")
                 });
             }
