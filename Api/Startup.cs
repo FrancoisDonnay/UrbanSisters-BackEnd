@@ -37,6 +37,7 @@ namespace UrbanSisters.Api
             services.AddSingleton(new MapperConfiguration(mc => 
             {
                 mc.CreateMap<Dto.UserInscription, User>();
+                mc.CreateMap<User, Dto.Profile>();
                 mc.CreateMap<User, Dto.User>().ForMember(dest => dest.IsRelookeuse, opt => opt.MapFrom(src => src.Relookeuse != null));
             }).CreateMapper());
             

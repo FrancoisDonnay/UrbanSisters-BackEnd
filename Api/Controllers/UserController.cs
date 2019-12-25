@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +16,7 @@ namespace UrbanSisters.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class UserController : ControllerBase
     {
         private readonly UrbanSisterContext _context;
@@ -25,12 +27,29 @@ namespace UrbanSisters.Api.Controllers
             this._context = context;
             this._mapper = mapper;
         }
+        
+        // GET: /user/profile
+        [HttpGet("profile")]
+        [ProducesResponseType(typeof(IEnumerable<Dto.Profile>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetProfile()
+        {
+            User user = await _context.User.Where(u => u.Id == Int32.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value)).FirstOrDefaultAsync();
+
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+            
+            return Ok(_mapper.Map<Dto.Profile>(user));
+        }
 
         // GET: /user
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Dto.User>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Get()
         {
             User[] list = await _context.User.Include(user => user.Relookeuse).ToArrayAsync();

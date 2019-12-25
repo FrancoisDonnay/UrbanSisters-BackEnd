@@ -85,7 +85,7 @@ namespace UrbanSisters.Api.Controllers
             var response = new
             {
                 access_token = encodedJwt,
-                expires_in = (int)_jwtOptions.ValidFor.TotalSeconds
+                expire_at = ((DateTimeOffset)_jwtOptions.Expiration).ToUnixTimeSeconds()
             };
 
             return Ok(response);
