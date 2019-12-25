@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using UrbanSisters.Api.Hubs;
 using Microsoft.OpenApi.Models;
 using AutoMapper;
+using Azure.Storage.Blobs;
+using UrbanSisters.Model;
 
 namespace UrbanSisters.Api
 {
@@ -29,17 +31,21 @@ namespace UrbanSisters.Api
         {
             services.AddDbContext<UrbanSisterContext>((options) =>
             {
-                options.UseSqlServer(Configuration["ConnectionString"]);
+                options.UseSqlServer(Configuration["SqlConnectionString"]);
             });
-
+            
             services.AddSingleton(new MapperConfiguration(mc => 
             {
-                mc.CreateMap<Dto.UserInscription, Model.User>();
-                mc.CreateMap<Model.User, Dto.User>();
+                mc.CreateMap<Dto.UserInscription, User>();
+                mc.CreateMap<User, Dto.User>().ForMember(dest => dest.IsRelookeuse, opt => opt.MapFrom(src => src.Relookeuse != null));
             }).CreateMapper());
+            
+            BlobServiceClient blobServiceClient = new BlobServiceClient(Configuration["BlobStorageConnectionString"]);
+            BlobContainerClient blobContainerClient = blobServiceClient.GetBlobContainerClient("profilepicture");
+            services.AddSingleton(blobContainerClient);
 
             SymmetricSecurityKey _signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["SecretSignatureKey"]));
-
+            
             services.Configure<JwtIssuerOptions>(options =>
             {
                 options.Issuer = "UrbanSistersServeurDeJetons";

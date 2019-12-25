@@ -1,7 +1,6 @@
-﻿using System;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using UrbanSisters.Dal;
 
 namespace UrbanSisters.Api.Controllers
 {
@@ -11,6 +10,7 @@ namespace UrbanSisters.Api.Controllers
     public class DefaultController : ControllerBase
     {
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult Index()
         {
             return Ok("UrbanSisters by Gilles et François");

@@ -9,6 +9,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using UrbanSisters.Dal;
 using UrbanSisters.Model;
 
@@ -30,6 +31,8 @@ namespace UrbanSisters.Api.Controllers
 
         // POST: /login
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> LoginAsync([FromBody] Dto.Login loginModel)
         {
             if (!ModelState.IsValid)
@@ -47,7 +50,7 @@ namespace UrbanSisters.Api.Controllers
 
             IEnumerable<Claim> claims = new List<Claim>(new []
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, await _jwtOptions.JtiGenerator()),
                 new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(_jwtOptions.IssuedAt).ToString(), ClaimValueTypes.Integer64)
             });

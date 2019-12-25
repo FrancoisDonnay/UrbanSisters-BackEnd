@@ -10,8 +10,6 @@ namespace UrbanSisters.Dto
         public string LastName { get; set; }
         public string Email { get; set; }
         public bool IsAdmin { get; set; }
-        public virtual Relookeuse Relookeuse { get; set; }
-        public virtual ICollection<Appointment> Appointment { get; set; }
-        public virtual ICollection<Participation> Participation { get; set; }
+        public bool IsRelookeuse { get; set; }
     }
 }
