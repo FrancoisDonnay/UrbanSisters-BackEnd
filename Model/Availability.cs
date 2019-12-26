@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace UrbanSisters.Model
 {
@@ -12,5 +13,8 @@ namespace UrbanSisters.Model
         public string EndTime { get; set; }
 
         public virtual Relookeuse Relookeuse { get; set; }
+        
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
     }
 }

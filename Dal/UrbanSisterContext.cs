@@ -49,21 +49,26 @@ namespace UrbanSisters.Dal
 
                 entity.Property(e => e.Mark).HasColumnName("mark");
 
-                entity.Property(e => e.UserId).HasColumnName("user_id");
-
                 entity.Property(e => e.RelookeuseId).HasColumnName("relookeuse_id");
 
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.Appointment)
-                    .HasForeignKey(d => d.UserId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__appointme__perso__6C190EBB");
+                entity.Property(e => e.RowVersion)
+                    .IsRequired()
+                    .IsRowVersion()
+                    .IsConcurrencyToken();
+
+                entity.Property(e => e.UserId).HasColumnName("user_id");
 
                 entity.HasOne(d => d.Relookeuse)
                     .WithMany(p => p.Appointment)
                     .HasForeignKey(d => d.RelookeuseId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__appointme__reloo__6D0D32F4");
+                    .HasConstraintName("FK__appointme__reloo__5EBF139D");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Appointment)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__appointme__user___5DCAEF64");
             });
 
             modelBuilder.Entity<Availability>(entity =>
@@ -81,6 +86,11 @@ namespace UrbanSisters.Dal
 
                 entity.Property(e => e.RelookeuseId).HasColumnName("relookeuse_id");
 
+                entity.Property(e => e.RowVersion)
+                    .IsRequired()
+                    .IsRowVersion()
+                    .IsConcurrencyToken();
+
                 entity.Property(e => e.StartTime)
                     .HasColumnName("start_time")
                     .HasMaxLength(5)
@@ -90,7 +100,7 @@ namespace UrbanSisters.Dal
                     .WithMany(p => p.Availability)
                     .HasForeignKey(d => d.RelookeuseId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__availabil__reloo__66603565");
+                    .HasConstraintName("FK__availabil__reloo__5812160E");
             });
 
             modelBuilder.Entity<ChatMessage>(entity =>
@@ -117,13 +127,13 @@ namespace UrbanSisters.Dal
                     .WithMany(p => p.ChatMessage)
                     .HasForeignKey(d => d.AppointmentId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__chat_mess__appoi__6FE99F9F");
+                    .HasConstraintName("FK__chat_mess__appoi__619B8048");
 
                 entity.HasOne(d => d.Sender)
                     .WithMany(p => p.ChatMessage)
                     .HasForeignKey(d => d.SenderId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__chat_mess__sende__70DDC3D8");
+                    .HasConstraintName("FK__chat_mess__sende__628FA481");
             });
 
             modelBuilder.Entity<Event>(entity =>
@@ -153,6 +163,11 @@ namespace UrbanSisters.Dal
                     .HasMaxLength(255)
                     .IsUnicode(false);
 
+                entity.Property(e => e.RowVersion)
+                    .IsRequired()
+                    .IsRowVersion()
+                    .IsConcurrencyToken();
+
                 entity.Property(e => e.StartDate)
                     .HasColumnName("start_date")
                     .HasColumnType("date");
@@ -161,7 +176,7 @@ namespace UrbanSisters.Dal
             modelBuilder.Entity<Participation>(entity =>
             {
                 entity.HasKey(e => new { e.EventId, e.UserId })
-                    .HasName("PK__particip__C63373AA14716218");
+                    .HasName("PK__particip__C8EB1457B6F98CCC");
 
                 entity.ToTable("participation");
 
@@ -177,13 +192,100 @@ namespace UrbanSisters.Dal
                     .WithMany(p => p.Participation)
                     .HasForeignKey(d => d.EventId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__participa__event__5CD6CB2B");
+                    .HasConstraintName("FK__participa__event__4E88ABD4");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Participation)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__participa__perso__5DCAEF64");
+                    .HasConstraintName("FK__participa__user___4F7CD00D");
+            });
+
+            modelBuilder.Entity<PortfolioPicture>(entity =>
+            {
+                entity.ToTable("portfolio_picture");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Picture)
+                    .IsRequired()
+                    .HasColumnName("picture")
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RelookeuseId).HasColumnName("relookeuse_id");
+
+                entity.HasOne(d => d.Relookeuse)
+                    .WithMany(p => p.PortfolioPicture)
+                    .HasForeignKey(d => d.RelookeuseId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__portfolio__reloo__5AEE82B9");
+            });
+
+            modelBuilder.Entity<Relookeuse>(entity =>
+            {
+                entity.HasKey(e => e.UserId)
+                    .HasName("PK__relookeu__B9BE370F2D4B3EE8");
+
+                entity.ToTable("relookeuse");
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("user_id")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.Description)
+                    .IsRequired()
+                    .HasColumnName("description")
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.IsPro).HasColumnName("is_pro");
+
+                entity.Property(e => e.Picture)
+                    .HasColumnName("picture")
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RowVersion)
+                    .IsRequired()
+                    .IsRowVersion()
+                    .IsConcurrencyToken();
+
+                entity.HasOne(d => d.User)
+                    .WithOne(p => p.Relookeuse)
+                    .HasForeignKey<Relookeuse>(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__relookeus__user___52593CB8");
+            });
+
+            modelBuilder.Entity<Tarif>(entity =>
+            {
+                entity.HasKey(e => new { e.RelookeuseId, e.Service })
+                    .HasName("PK__tarif__CA21AF4743799249");
+
+                entity.ToTable("tarif");
+
+                entity.Property(e => e.RelookeuseId).HasColumnName("relookeuse_id");
+
+                entity.Property(e => e.Service)
+                    .HasColumnName("service")
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Price)
+                    .HasColumnName("price")
+                    .HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.RowVersion)
+                    .IsRequired()
+                    .IsRowVersion()
+                    .IsConcurrencyToken();
+
+                entity.HasOne(d => d.Relookeuse)
+                    .WithMany(p => p.Tarif)
+                    .HasForeignKey(d => d.RelookeuseId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__tarif__relookeus__5535A963");
             });
 
             modelBuilder.Entity<User>(entity =>
@@ -191,7 +293,7 @@ namespace UrbanSisters.Dal
                 entity.ToTable("user");
 
                 entity.HasIndex(e => e.Email)
-                    .HasName("UQ__user__AB6E61646FD4C4D0")
+                    .HasName("UQ__user__AB6E6164976EA41A")
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnName("id");
@@ -221,83 +323,11 @@ namespace UrbanSisters.Dal
                     .HasColumnName("password")
                     .HasMaxLength(255)
                     .IsUnicode(false);
-            });
 
-            modelBuilder.Entity<PortfolioPicture>(entity =>
-            {
-                entity.ToTable("portfolio_picture");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.Picture)
+                entity.Property(e => e.RowVersion)
                     .IsRequired()
-                    .HasColumnName("picture")
-                    .HasMaxLength(255)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.RelookeuseId).HasColumnName("relookeuse_id");
-
-                entity.HasOne(d => d.Relookeuse)
-                    .WithMany(p => p.PortfolioPicture)
-                    .HasForeignKey(d => d.RelookeuseId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__portfolio__reloo__693CA210");
-            });
-
-            modelBuilder.Entity<Relookeuse>(entity =>
-            {
-                entity.HasKey(e => e.UserId)
-                    .HasName("PK__relookeu__543848DFE04B6146");
-
-                entity.ToTable("relookeuse");
-
-                entity.Property(e => e.UserId)
-                    .HasColumnName("user_id")
-                    .ValueGeneratedNever();
-
-                entity.Property(e => e.Description)
-                    .IsRequired()
-                    .HasColumnName("description")
-                    .HasMaxLength(255)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.IsPro).HasColumnName("is_pro");
-
-                entity.Property(e => e.Picture)
-                    .HasColumnName("picture")
-                    .HasMaxLength(255)
-                    .IsUnicode(false);
-
-                entity.HasOne(d => d.User)
-                    .WithOne(p => p.Relookeuse)
-                    .HasForeignKey<Relookeuse>(d => d.UserId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__relookeus__perso__60A75C0F");
-            });
-
-            modelBuilder.Entity<Tarif>(entity =>
-            {
-                entity.HasKey(e => new { e.RelookeuseId, e.Service })
-                    .HasName("PK__tarif__CA21AF477B4F0D44");
-
-                entity.ToTable("tarif");
-
-                entity.Property(e => e.RelookeuseId).HasColumnName("relookeuse_id");
-
-                entity.Property(e => e.Service)
-                    .HasColumnName("service")
-                    .HasMaxLength(255)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Price)
-                    .HasColumnName("price")
-                    .HasColumnType("decimal(10, 2)");
-
-                entity.HasOne(d => d.Relookeuse)
-                    .WithMany(p => p.Tarif)
-                    .HasForeignKey(d => d.RelookeuseId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__tarif__relookeus__6383C8BA");
+                    .IsRowVersion()
+                    .IsConcurrencyToken();
             });
 
             OnModelCreatingPartial(modelBuilder);

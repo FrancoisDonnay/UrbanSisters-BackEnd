@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace UrbanSisters.Model
 {
@@ -23,5 +24,8 @@ namespace UrbanSisters.Model
         public virtual Relookeuse Relookeuse { get; set; }
         public virtual User User { get; set; }
         public virtual ICollection<ChatMessage> ChatMessage { get; set; }
+        
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
     }
 }

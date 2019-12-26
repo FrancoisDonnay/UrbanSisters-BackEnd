@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace UrbanSisters.Model
 {
@@ -23,5 +24,8 @@ namespace UrbanSisters.Model
         public virtual ICollection<Availability> Availability { get; set; }
         public virtual ICollection<PortfolioPicture> PortfolioPicture { get; set; }
         public virtual ICollection<Tarif> Tarif { get; set; }
+        
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace UrbanSisters.Model
 {
@@ -18,5 +19,8 @@ namespace UrbanSisters.Model
         public string Picture { get; set; }
 
         public virtual ICollection<Participation> Participation { get; set; }
+        
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
     }
 }
