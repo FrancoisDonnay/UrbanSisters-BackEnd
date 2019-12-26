@@ -11,5 +11,7 @@ namespace UrbanSisters.Dto
         public string Email { get; set; }
         public bool IsAdmin { get; set; }
         public bool IsRelookeuse { get; set; }
+        
+        public byte[] RowVersion { get; set; }
     }
 }

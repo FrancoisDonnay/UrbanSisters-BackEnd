@@ -28,9 +28,9 @@ namespace UrbanSisters.Api.Controllers
             this._mapper = mapper;
         }
         
-        // GET: /user/profile
-        [HttpGet("profile")]
-        [ProducesResponseType(typeof(IEnumerable<Dto.Profile>), StatusCodes.Status200OK)]
+        // GET: /user/me
+        [HttpGet("me")]
+        [ProducesResponseType(typeof(IEnumerable<Dto.User>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetProfile()
         {
@@ -41,7 +41,7 @@ namespace UrbanSisters.Api.Controllers
                 return Unauthorized();
             }
             
-            return Ok(_mapper.Map<Dto.Profile>(user));
+            return Ok(_mapper.Map<Dto.User>(user));
         }
 
         // GET: /user
