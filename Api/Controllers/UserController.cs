@@ -34,7 +34,7 @@ namespace UrbanSisters.Api.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetProfile()
         {
-            User user = await _context.User.Where(u => u.Id == Int32.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value)).FirstOrDefaultAsync();
+            User user = await _context.User.Include(user => user.Relookeuse).Where(u => u.Id == Int32.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value)).FirstOrDefaultAsync();
 
             if (user == null)
             {
