@@ -9,6 +9,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Extensions;
 using UrbanSisters.Dal;
 using UrbanSisters.Model;
 
@@ -55,6 +56,45 @@ namespace UrbanSisters.Api.Controllers
             User[] list = await _context.User.Include(user => user.Relookeuse).ToArrayAsync();
             
             return Ok(list.Select(user => _mapper.Map<Dto.User>(user)));
+        }
+        
+        //PATCH: /user
+        [HttpPatch]
+        [ProducesResponseType(typeof(Dto.User), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiError), StatusCodes.Status409Conflict)]
+        public async Task<IActionResult> PatchUser([FromBody] Dto.UserChange userChange)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            
+            User user = await _context.User.Where(u => u.Id == Int32.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value)).FirstOrDefaultAsync();
+            
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            if (await _context.User.Where(u => u.Email.Equals(userChange.Email.ToLower())).FirstOrDefaultAsync() != null)
+            {
+                return Conflict(ConflictErrorType.EmailAlreadyUsed);
+            }
+
+            user.Email = userChange.Email.ToLower();
+            _context.Entry(user).OriginalValues["RowVersion"] = userChange.RowVersion;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                return Conflict(ConflictErrorType.UserNewlyModified);
+            }
+
+            return Ok(_mapper.Map<Dto.User>(user));
         }
     }
 }
