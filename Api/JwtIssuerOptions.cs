@@ -16,7 +16,7 @@ namespace UrbanSisters.Api
 
         public DateTime IssuedAt => DateTime.UtcNow;
 
-        public TimeSpan ValidFor { get; set; } = TimeSpan.FromMinutes(30);
+        public TimeSpan ValidFor { get; set; } = TimeSpan.FromMinutes(60);
 
         public DateTime Expiration => IssuedAt.Add(ValidFor);
 

@@ -37,7 +37,12 @@ namespace UrbanSisters.Api
             services.AddSingleton(new MapperConfiguration(mc => 
             {
                 mc.CreateMap<Dto.UserInscription, User>();
-                mc.CreateMap<User, Dto.User>().ForMember(dest => dest.IsRelookeuse, opt => opt.MapFrom(src => src.Relookeuse != null));
+                mc.CreateMap<Relookeuse, Dto.Relookeuse>()
+                    .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.UserId))
+                    .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.User.FirstName))
+                    .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.User.LastName));
+                mc.CreateMap<User, Dto.User>()
+                    .ForMember(dest => dest.IsRelookeuse, opt => opt.MapFrom(src => src.Relookeuse != null));
             }).CreateMapper());
             
             BlobServiceClient blobServiceClient = new BlobServiceClient(Configuration["BlobStorageConnectionString"]);
