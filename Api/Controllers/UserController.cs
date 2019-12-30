@@ -31,7 +31,7 @@ namespace UrbanSisters.Api.Controllers
         
         // GET: /user/me
         [HttpGet("me")]
-        [ProducesResponseType(typeof(IEnumerable<Dto.User>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Dto.User), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetProfile()
         {
