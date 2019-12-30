@@ -90,5 +90,51 @@ namespace UrbanSisters.Api.Controllers
             
             return Created("api/appointment/"+result.Entity.Id, dtoAppointment);
         }
+        
+        [HttpPatch("{id}/close")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        public async Task<IActionResult> Get(int id, [FromBody] Dto.Rating ratingRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            Appointment appointment = await _context.Appointment.FirstOrDefaultAsync(ap => ap.Id == id && ap.UserId == Int32.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value));
+
+            if (appointment == null)
+            {
+                return NotFound();
+            }
+
+            if (!appointment.Accepted)
+            {
+                return BadRequest();
+            }
+
+            if (appointment.Finished)
+            {
+                return Conflict(ConflictErrorType.AppointmentAlreadyClose);
+            }
+
+            appointment.Finished = true;
+            appointment.Mark = ratingRequest.Value;
+            _context.Entry(appointment).OriginalValues["RowVersion"] = ratingRequest.RowVersion;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                return Conflict(ConflictErrorType.AppointmentNewlyModified);
+            }
+
+            return NoContent();
+        }
     }
 }
