@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace UrbanSisters.Model
 {
@@ -27,5 +28,18 @@ namespace UrbanSisters.Model
         
         [Timestamp]
         public byte[] RowVersion { get; set; }
+
+        public double? AvgMark
+        {
+            get
+            {
+                if (Appointment.All(ap => ap.Mark == null))
+                {
+                    return null;
+                }
+            
+                return Appointment.Aggregate(0.0, (i, appointment) => i + appointment.Mark.GetValueOrDefault(0)) / Appointment.Count(ap => ap.Mark != null);
+            }
+        }
     }
 }

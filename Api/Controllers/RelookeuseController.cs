@@ -32,9 +32,9 @@ namespace UrbanSisters.Api.Controllers
         }
         
         [HttpGet]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(Dto.Page<Dto.Relookeuse>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Get(int? pageIndex = 0, int? pageSize = 5)
         {
             if (pageIndex.Value < 0 || pageSize.Value < 0)
@@ -42,7 +42,7 @@ namespace UrbanSisters.Api.Controllers
                 return BadRequest();
             }
             
-            IEnumerable<Relookeuse> relookeuseAtPage = await _context.Relookeuse.Include(Relookeuse => Relookeuse.User).OrderBy(relookeuse => relookeuse.UserId).Skip(pageIndex.Value* pageSize.Value).Take(pageSize.Value).ToArrayAsync();
+            IEnumerable<Relookeuse> relookeuseAtPage = await _context.Relookeuse.Include(relookeuse => relookeuse.User).Include(relookeuse => relookeuse.Appointment).OrderByDescending((relookeuse => (relookeuse.Appointment.Sum(appointment => appointment.Mark)/relookeuse.Appointment.Count(appointment => appointment.Mark != null)))).Skip(pageIndex.Value* pageSize.Value).Take(pageSize.Value).ToArrayAsync();
             int countTotalRelookeuse = await _context.Relookeuse.CountAsync();
 
             return Ok(new Dto.Page<Dto.Relookeuse>{Items = relookeuseAtPage.Select(relookeuse => _mapper.Map<Relookeuse, Dto.Relookeuse>(relookeuse)), PageIndex = pageIndex.Value, PageSize = pageSize.Value, TotalCount = countTotalRelookeuse});
@@ -50,19 +50,27 @@ namespace UrbanSisters.Api.Controllers
         
         // GET: /relookeuse
         [HttpGet("{id}")]
+        [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> GetDetail(int id)
         {
-            Relookeuse relookeuse = await _context.Relookeuse.FirstOrDefaultAsync(user => user.UserId == id);
+            if (id < 1)
+            {
+                return BadRequest();
+            }
 
+            Relookeuse relookeuse = await _context.Relookeuse.Where(relookeuse => relookeuse.UserId == id).Include(relookeuse => relookeuse.User).Include(relookeuse => relookeuse.Appointment).Include(relookeuse => relookeuse.PortfolioPicture).Include(relookeuse => relookeuse.Tarif).Include(relookeuse => relookeuse.Availability).FirstOrDefaultAsync();
+            
             if (relookeuse == null)
             {
                 return NotFound(id);
             }
 
-            return Ok(relookeuse);
+            relookeuse.Availability = relookeuse.Availability.OrderBy(availability => availability.StartTime).ToList();
+            
+            return Ok(_mapper.Map<Relookeuse, Dto.DetailedRelookeuse>(relookeuse));
         }
         
         [HttpPost("picture/{id}")]

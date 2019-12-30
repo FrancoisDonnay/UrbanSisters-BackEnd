@@ -8,5 +8,7 @@
         public string Picture { get; set; }
         public string Description { get; set; }
         public bool IsPro { get; set; }
+        public double? AvgMark { get; set; }
+        public byte[] RowVersion { get; set; }
     }
 }
