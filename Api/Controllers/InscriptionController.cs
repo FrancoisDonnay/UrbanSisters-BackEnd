@@ -51,9 +51,9 @@ namespace UrbanSisters.Api.Controllers
             user.Password = new PasswordHasher<User>().HashPassword(user, user.Password);
             user.Email = user.Email.ToLower();
 
-            var result = _context.Add(user);
+            var result = await _context.AddAsync(user);
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             
             IEnumerable<Claim> claims = new List<Claim>(new []
             {

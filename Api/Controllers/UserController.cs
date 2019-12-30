@@ -9,7 +9,6 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Extensions;
 using UrbanSisters.Dal;
 using UrbanSisters.Model;
 

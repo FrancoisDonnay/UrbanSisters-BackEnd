@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UrbanSisters.Dal;
 using UrbanSisters.Model;
+using Appointment = UrbanSisters.Model.Appointment;
 
 namespace UrbanSisters.Api.Controllers
 {
@@ -45,6 +46,49 @@ namespace UrbanSisters.Api.Controllers
             int countTotalAppointment = await _context.Appointment.CountAsync();
 
             return Ok(new Dto.Page<Dto.Appointment>{Items = appointments.Select(appointment => _mapper.Map<Appointment, Dto.Appointment>(appointment)), PageIndex = pageIndex.Value, PageSize = pageSize.Value, TotalCount = countTotalAppointment});
+        }
+        
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        public async Task<IActionResult> Get([FromBody] Dto.AppointmentRequest appointmentRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            
+            if (await _context.Appointment.CountAsync(appointment => (!appointment.Accepted || !appointment.Finished) && appointment.RelookeuseId == appointmentRequest.RelookeuseId && appointment.UserId == Int32.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value)) > 0)
+            {
+                return Conflict();
+            }
+            
+            Relookeuse relookeuse = await _context.Relookeuse.Include(rel => rel.User).FirstOrDefaultAsync(rel => rel.UserId == appointmentRequest.RelookeuseId);
+
+            if (relookeuse == null)
+            {
+                return NotFound();
+            }
+            
+            Appointment appointment = new Appointment();
+            appointment.UserId = Int32.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            appointment.RelookeuseId = appointmentRequest.RelookeuseId;
+            appointment.Date = DateTime.Now;
+            appointment.Accepted = false;
+            appointment.Makeup = appointmentRequest.MakeUp;
+            appointment.Finished = false;
+
+            var result = await _context.AddAsync(appointment);
+            await _context.SaveChangesAsync();
+
+            Dto.Appointment dtoAppointment = _mapper.Map<Appointment, Dto.Appointment>(result.Entity);
+            dtoAppointment.RelookeuseFirstName = relookeuse.User.FirstName;
+            dtoAppointment.RelookeuseLastName = relookeuse.User.LastName;
+            
+            return Created("api/appointment/"+result.Entity.Id, dtoAppointment);
         }
     }
 }
