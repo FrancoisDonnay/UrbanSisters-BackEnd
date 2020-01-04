@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace UrbanSisters.Model
+﻿namespace UrbanSisters.Dto
 {
     public class ApiError
     {

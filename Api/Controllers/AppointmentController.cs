@@ -41,7 +41,7 @@ namespace UrbanSisters.Api.Controllers
                 return BadRequest();
             }
             
-            IEnumerable<Appointment> appointments = await _context.Appointment.Where(appointment => appointment.UserId == Int32.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value)).Include(appointment => appointment.Relookeuse).Include(appointment => appointment.Relookeuse.User).OrderByDescending(appointment => appointment.Date).Skip(pageIndex.Value* pageSize.Value).Take(pageSize.Value).ToArrayAsync();
+            IEnumerable<Appointment> appointments = await _context.Appointment.Where(appointment => appointment.UserId == int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value)).Include(appointment => appointment.Relookeuse).Include(appointment => appointment.Relookeuse.User).OrderByDescending(appointment => appointment.Date).Skip(pageIndex.Value* pageSize.Value).Take(pageSize.Value).ToArrayAsync();
             
             int countTotalAppointment = await _context.Appointment.CountAsync();
 
@@ -61,7 +61,7 @@ namespace UrbanSisters.Api.Controllers
                 return BadRequest(ModelState);
             }
             
-            if (await _context.Appointment.CountAsync(appointment => (!appointment.Accepted || !appointment.Finished) && appointment.RelookeuseId == appointmentRequest.RelookeuseId && appointment.UserId == Int32.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value)) > 0)
+            if (await _context.Appointment.CountAsync(ap => (!ap.Accepted || !ap.Finished) && ap.RelookeuseId == appointmentRequest.RelookeuseId && ap.UserId == int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value)) > 0)
             {
                 return Conflict();
             }
@@ -72,14 +72,16 @@ namespace UrbanSisters.Api.Controllers
             {
                 return NotFound();
             }
-            
-            Appointment appointment = new Appointment();
-            appointment.UserId = Int32.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            appointment.RelookeuseId = appointmentRequest.RelookeuseId;
-            appointment.Date = DateTime.Now;
-            appointment.Accepted = false;
-            appointment.Makeup = appointmentRequest.MakeUp;
-            appointment.Finished = false;
+
+            Appointment appointment = new Appointment
+            {
+                UserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value),
+                RelookeuseId = appointmentRequest.RelookeuseId,
+                Date = DateTime.Now,
+                Accepted = false,
+                Makeup = appointmentRequest.MakeUp,
+                Finished = false
+            };
 
             var result = await _context.AddAsync(appointment);
             await _context.SaveChangesAsync();
@@ -104,7 +106,7 @@ namespace UrbanSisters.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            Appointment appointment = await _context.Appointment.FirstOrDefaultAsync(ap => ap.Id == id && ap.UserId == Int32.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value));
+            Appointment appointment = await _context.Appointment.FirstOrDefaultAsync(ap => ap.Id == id && ap.UserId == int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value));
 
             if (appointment == null)
             {
@@ -129,7 +131,7 @@ namespace UrbanSisters.Api.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException ex)
+            catch (DbUpdateConcurrencyException)
             {
                 return Conflict(ConflictErrorType.AppointmentNewlyModified);
             }

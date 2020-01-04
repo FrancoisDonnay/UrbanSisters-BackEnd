@@ -42,7 +42,7 @@ namespace UrbanSisters.Api.Controllers
                 return BadRequest();
             }
             
-            IEnumerable<Relookeuse> relookeuseAtPage = await _context.Relookeuse.Include(relookeuse => relookeuse.User).Include(relookeuse => relookeuse.Appointment).OrderByDescending((relookeuse => (relookeuse.Appointment.Sum(appointment => appointment.Mark)/relookeuse.Appointment.Count(appointment => appointment.Mark != null)))).Skip(pageIndex.Value* pageSize.Value).Take(pageSize.Value).ToArrayAsync();
+            IEnumerable<Relookeuse> relookeuseAtPage = await _context.Relookeuse.Include(relookeuse => relookeuse.User).Include(relookeuse => relookeuse.Appointment).OrderByDescending(relookeuse => relookeuse.Appointment.Sum(appointment => appointment.Mark)/relookeuse.Appointment.Count(appointment => appointment.Mark != null)).Skip(pageIndex.Value* pageSize.Value).Take(pageSize.Value).ToArrayAsync();
             int countTotalRelookeuse = await _context.Relookeuse.CountAsync();
 
             return Ok(new Dto.Page<Dto.Relookeuse>{Items = relookeuseAtPage.Select(relookeuse => _mapper.Map<Relookeuse, Dto.Relookeuse>(relookeuse)), PageIndex = pageIndex.Value, PageSize = pageSize.Value, TotalCount = countTotalRelookeuse});
@@ -61,7 +61,7 @@ namespace UrbanSisters.Api.Controllers
                 return BadRequest();
             }
 
-            Relookeuse relookeuse = await _context.Relookeuse.Where(relookeuse => relookeuse.UserId == id).Include(relookeuse => relookeuse.User).Include(relookeuse => relookeuse.Appointment).Include(relookeuse => relookeuse.PortfolioPicture).Include(relookeuse => relookeuse.Tarif).Include(relookeuse => relookeuse.Availability).FirstOrDefaultAsync();
+            Relookeuse relookeuse = await _context.Relookeuse.Where(rel=> rel.UserId == id).Include(rel => rel.User).Include(rel => rel.Appointment).Include(rel => rel.PortfolioPicture).Include(rel => rel.Tarif).Include(rel => rel.Availability).FirstOrDefaultAsync();
             
             if (relookeuse == null)
             {
@@ -135,7 +135,7 @@ namespace UrbanSisters.Api.Controllers
             
             Task removeOldBlobTask = _blobContainerClient.GetBlobClient(relookeuse.Picture.Split("/").Last()).DeleteIfExistsAsync();
             
-            BlobClient blobClient = _blobContainerClient.GetBlobClient(Guid.NewGuid() + Path.GetExtension(picture.File.FileName));;
+            BlobClient blobClient = _blobContainerClient.GetBlobClient(Guid.NewGuid() + Path.GetExtension(picture.File.FileName));
             
             await using var stream = picture.File.OpenReadStream();
             Task saveInCloudTask = blobClient.UploadAsync(stream);

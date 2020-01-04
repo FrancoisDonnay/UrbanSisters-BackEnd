@@ -1,6 +1,6 @@
-﻿using System.ComponentModel;
+﻿using UrbanSisters.Dto;
 
-namespace UrbanSisters.Model
+namespace UrbanSisters.Api
 {
     public class ConflictErrorType
     {

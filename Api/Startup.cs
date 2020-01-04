@@ -10,9 +10,9 @@ using UrbanSisters.Dal;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using UrbanSisters.Api.Hubs;
-using Microsoft.OpenApi.Models;
 using AutoMapper;
 using Azure.Storage.Blobs;
+using Microsoft.OpenApi.Models;
 using UrbanSisters.Model;
 
 namespace UrbanSisters.Api
@@ -59,13 +59,13 @@ namespace UrbanSisters.Api
             BlobContainerClient blobContainerClient = blobServiceClient.GetBlobContainerClient("profilepicture");
             services.AddSingleton(blobContainerClient);
 
-            SymmetricSecurityKey _signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["SecretSignatureKey"]));
+            SymmetricSecurityKey signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["SecretSignatureKey"]));
             
             services.Configure<JwtIssuerOptions>(options =>
             {
                 options.Issuer = "UrbanSistersServeurDeJetons";
                 options.Audience = "http://localhost:5000";
-                options.SigningCredentials = new SigningCredentials(_signingKey, SecurityAlgorithms.HmacSha256);
+                options.SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
             });
 
             var tokenValidationParameters = new TokenValidationParameters
@@ -77,7 +77,7 @@ namespace UrbanSisters.Api
                 ValidAudience = "http://localhost:5000",
 
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = _signingKey,
+                IssuerSigningKey = signingKey,
 
                 RequireExpirationTime = true,
                 ValidateLifetime = true,
@@ -116,7 +116,7 @@ namespace UrbanSisters.Api
 
             app.UseHttpsRedirection();
 
-            app.UseSwagger();
+            app.UseSwagger(c => c.SerializeAsV2 = true);
 
             app.UseSwaggerUI(c =>
             {

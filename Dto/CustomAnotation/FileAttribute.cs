@@ -1,9 +1,7 @@
-﻿using System;  
-using System.Collections.Generic;  
+﻿using System;
 using System.ComponentModel.DataAnnotations;  
 using System.Linq;
 using Microsoft.AspNetCore.Http;
-using UrbanSisters.Model;
 
 namespace UrbanSisters.Dto.CustomAnotation
 {
@@ -15,7 +13,7 @@ namespace UrbanSisters.Dto.CustomAnotation
         
         public override bool IsValid(object value)  
         {
-            if (value == null || !(value is IFormFile))
+            if (!(value is IFormFile))
             {
                 return false;
             }

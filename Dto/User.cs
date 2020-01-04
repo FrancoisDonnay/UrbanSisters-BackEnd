@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using UrbanSisters.Model;
-
-namespace UrbanSisters.Dto
+﻿namespace UrbanSisters.Dto
 {
     public class User
     {

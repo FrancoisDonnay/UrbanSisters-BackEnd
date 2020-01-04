@@ -22,7 +22,7 @@ namespace UrbanSisters.Api.Hubs
 
         public async Task SendMessageToRelookeuse(int receiver, string message)
         {
-            Appointment appointment = await _context.Appointment.Where(a => a.Accepted && !a.Finished && a.UserId.Equals(Int32.Parse(Context.UserIdentifier)) && a.RelookeuseId == receiver).FirstOrDefaultAsync();
+            Appointment appointment = await _context.Appointment.Where(a => a.Accepted && !a.Finished && a.UserId.Equals(int.Parse(Context.UserIdentifier)) && a.RelookeuseId == receiver).FirstOrDefaultAsync();
 
             if (appointment == null)
             {
@@ -36,7 +36,7 @@ namespace UrbanSisters.Api.Hubs
         
         public async Task SendMessageToCustomer(int receiver, string message)
         {
-            Appointment appointment = await _context.Appointment.Where(a => a.Accepted && !a.Finished && a.UserId == receiver && a.RelookeuseId.Equals(Int32.Parse(Context.UserIdentifier))).FirstOrDefaultAsync();
+            Appointment appointment = await _context.Appointment.Where(a => a.Accepted && !a.Finished && a.UserId == receiver && a.RelookeuseId.Equals(int.Parse(Context.UserIdentifier))).FirstOrDefaultAsync();
 
             if (appointment == null)
             {

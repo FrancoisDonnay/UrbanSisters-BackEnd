@@ -32,17 +32,17 @@ namespace UrbanSisters.Api.Controllers
         }
         
         [HttpPost]
-        [ProducesResponseType(typeof(ApiError), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(Dto.ApiError), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<IActionResult> add([FromBody] Dto.UserInscription userInscription)
+        [ProducesResponseType(typeof(Dto.JwtToken), StatusCodes.Status201Created)]
+        public async Task<IActionResult> Add([FromBody] Dto.UserInscription userInscription)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if(_context.User.FirstOrDefault(user => user.Email.Equals(userInscription.Email.ToLower())) != null)
+            if(_context.User.FirstOrDefault(u => u.Email.Equals(userInscription.Email.ToLower())) != null)
             {
                 return Conflict(ConflictErrorType.EmailAlreadyUsed);
             }
@@ -71,15 +71,7 @@ namespace UrbanSisters.Api.Controllers
                 signingCredentials: _jwtOptions.SigningCredentials
             );
 
-            var encodedJwt = new JwtSecurityTokenHandler().WriteToken(token);
-
-            var response = new
-            {
-                access_token = encodedJwt,
-                expire_at = ((DateTimeOffset)_jwtOptions.Expiration).ToUnixTimeSeconds()
-            };
-
-            return Created("api/user/" + result.Entity.Id, response);
+            return Created("api/user/" + result.Entity.Id, new Dto.JwtToken{access_token = new JwtSecurityTokenHandler().WriteToken(token), expire_at = ((DateTimeOffset)_jwtOptions.Expiration).ToUnixTimeSeconds()});
         }
 
         private static long ToUnixEpochDate(DateTime date)

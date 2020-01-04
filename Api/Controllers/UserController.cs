@@ -34,7 +34,7 @@ namespace UrbanSisters.Api.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetProfile()
         {
-            User user = await _context.User.Include(user => user.Relookeuse).Where(u => u.Id == Int32.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value)).FirstOrDefaultAsync();
+            User user = await _context.User.Include(u => u.Relookeuse).Where(u => u.Id == int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value)).FirstOrDefaultAsync();
 
             if (user == null)
             {
@@ -61,7 +61,7 @@ namespace UrbanSisters.Api.Controllers
         [HttpPatch]
         [ProducesResponseType(typeof(Dto.User), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(ApiError), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(Dto.ApiError), StatusCodes.Status409Conflict)]
         public async Task<IActionResult> PatchUser([FromBody] Dto.UserChange userChange)
         {
             if (!ModelState.IsValid)
@@ -69,7 +69,7 @@ namespace UrbanSisters.Api.Controllers
                 return BadRequest();
             }
             
-            User user = await _context.User.Where(u => u.Id == Int32.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value)).FirstOrDefaultAsync();
+            User user = await _context.User.Where(u => u.Id == int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value)).FirstOrDefaultAsync();
             
             if (user == null)
             {
@@ -88,7 +88,7 @@ namespace UrbanSisters.Api.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException ex)
+            catch (DbUpdateConcurrencyException)
             {
                 return Conflict(ConflictErrorType.UserNewlyModified);
             }

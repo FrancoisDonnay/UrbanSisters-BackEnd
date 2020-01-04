@@ -11,7 +11,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using UrbanSisters.Dal;
-using UrbanSisters.Model;
+using User = UrbanSisters.Model.User;
 
 namespace UrbanSisters.Api.Controllers
 {
@@ -32,7 +32,8 @@ namespace UrbanSisters.Api.Controllers
         // POST: /login
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(Dto.JwtToken), StatusCodes.Status200OK)]
         public async Task<IActionResult> LoginAsync([FromBody] Dto.Login loginModel)
         {
             if (!ModelState.IsValid)
@@ -79,16 +80,8 @@ namespace UrbanSisters.Api.Controllers
                 expires: _jwtOptions.Expiration,
                 signingCredentials: _jwtOptions.SigningCredentials
             );
-
-            var encodedJwt = new JwtSecurityTokenHandler().WriteToken(token);
-
-            var response = new
-            {
-                access_token = encodedJwt,
-                expire_at = ((DateTimeOffset)_jwtOptions.Expiration).ToUnixTimeSeconds()
-            };
-
-            return Ok(response);
+            
+            return Ok(new Dto.JwtToken{access_token = new JwtSecurityTokenHandler().WriteToken(token), expire_at = ((DateTimeOffset)_jwtOptions.Expiration).ToUnixTimeSeconds()});
         }
 
         private static long ToUnixEpochDate(DateTime date)

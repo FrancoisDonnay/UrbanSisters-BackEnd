@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace UrbanSisters.Model
+﻿namespace UrbanSisters.Model
 {
     public partial class PortfolioPicture
     {
