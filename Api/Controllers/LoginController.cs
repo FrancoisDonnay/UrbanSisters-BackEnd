@@ -48,45 +48,8 @@ namespace UrbanSisters.Api.Controllers
             {
                 return Unauthorized();
             }
-
-            IEnumerable<Claim> claims = new List<Claim>(new []
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Jti, await _jwtOptions.JtiGenerator()),
-                new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(_jwtOptions.IssuedAt).ToString(), ClaimValueTypes.Integer64)
-            });
             
-            if(user.IsAdmin)
-            {
-                claims = claims.Union(new[]
-                {
-                    new Claim(ClaimTypes.Role, "admin")
-                });
-            }
-
-            if(user.Relookeuse != null)
-            {
-                claims = claims.Union(new[]
-                {
-                    new Claim(ClaimTypes.Role, "relookeuse")
-                });
-            }
-
-            JwtSecurityToken token = new JwtSecurityToken(
-                issuer: _jwtOptions.Issuer,
-                audience: _jwtOptions.Audience,
-                claims: claims,
-                notBefore: _jwtOptions.NotBefore,
-                expires: _jwtOptions.Expiration,
-                signingCredentials: _jwtOptions.SigningCredentials
-            );
-            
-            return Ok(new Dto.JwtToken{access_token = new JwtSecurityTokenHandler().WriteToken(token), expire_at = ((DateTimeOffset)_jwtOptions.Expiration).ToUnixTimeSeconds()});
-        }
-
-        private static long ToUnixEpochDate(DateTime date)
-        {
-            return (long)Math.Round((date.ToUniversalTime() - new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero)).TotalSeconds);
+            return Ok(await Utils.CreateTokenFor(user, _jwtOptions));
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using Azure.Storage.Blobs;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using UrbanSisters.Dal;
 using UrbanSisters.Model;
 
@@ -23,12 +25,14 @@ namespace UrbanSisters.Api.Controllers
         private readonly UrbanSisterContext _context;
         private readonly IMapper _mapper;
         private readonly BlobContainerClient _blobContainerClient;
+        private readonly JwtIssuerOptions _jwtOptions;
 
-        public RelookeuseController(UrbanSisterContext context, IMapper mapper, BlobContainerClient blobContainerClient)
+        public RelookeuseController(UrbanSisterContext context, IMapper mapper, BlobContainerClient blobContainerClient, IOptions<JwtIssuerOptions> jwtOptions)
         {
             this._context = context;
             this._mapper = mapper;
             this._blobContainerClient = blobContainerClient;
+            this._jwtOptions = jwtOptions.Value;
         }
         
         [HttpGet]
@@ -147,6 +151,35 @@ namespace UrbanSisters.Api.Controllers
             await Task.WhenAll(removeOldBlobTask, saveInCloudTask, saveDatabaseTask);
             
             return Ok(new {userId = relookeuse.UserId, pictureUrl = blobClient.Uri});
+        }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(Dto.JwtToken), StatusCodes.Status201Created)]
+        public async Task<IActionResult> NewInscription([FromBody] Dto.RelookeuseInscription relookeuseInscription)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            
+            if(_context.Relookeuse.FirstOrDefault(rel => rel.UserId == userId) != null)
+            {
+                return Conflict();
+            }
+
+            Relookeuse relookeuse = _mapper.Map<Relookeuse>(relookeuseInscription);
+            relookeuse.UserId = userId;
+
+            await _context.AddAsync(relookeuse);
+            await _context.SaveChangesAsync();
+
+            User user = await _context.User.FirstOrDefaultAsync(u => u.Id == userId);
+            
+            return Created("api/relookeuse/" + userId, await Utils.CreateTokenFor(user, _jwtOptions));
         }
     }
 }

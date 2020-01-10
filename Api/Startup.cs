@@ -40,6 +40,7 @@ namespace UrbanSisters.Api
                 mc.CreateMap<Tarif, Dto.Tarif>();
                 mc.CreateMap<Availability, Dto.Availability>();
                 mc.CreateMap<PortfolioPicture, Dto.PortfolioPicture>();
+                mc.CreateMap<Dto.RelookeuseInscription, Relookeuse>();
                 mc.CreateMap<Appointment, Dto.Appointment>()
                     .ForMember(dest => dest.RelookeuseFirstName, opt => opt.MapFrom(src => src.Relookeuse.User.FirstName))
                     .ForMember(dest => dest.RelookeuseLastName, opt => opt.MapFrom(src => src.Relookeuse.User.LastName));
@@ -85,6 +86,12 @@ namespace UrbanSisters.Api
                 ClockSkew = TimeSpan.Zero
             };
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowClientOrigin",
+                    builder => builder.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin());
+            });
+            
             services.AddAuthentication(options =>
             {
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -96,7 +103,7 @@ namespace UrbanSisters.Api
                 options.TokenValidationParameters = tokenValidationParameters;
                 options.SaveToken = true;
             });
-
+            
             services.AddControllers();
             services.AddSignalR();
 
@@ -122,11 +129,13 @@ namespace UrbanSisters.Api
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "UrbanSisters Api V1");
             });
+            
+            app.UseCors("AllowClientOrigin");
 
             app.UseRouting();
 
             app.UseAuthorization();
-
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

@@ -30,10 +30,10 @@ namespace UrbanSisters.Api.Controllers
             this._mapper = mapper;
             this._jwtOptions = jwtOptions.Value;
         }
-        
+
         [HttpPost]
-        [ProducesResponseType(typeof(Dto.ApiError), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(Dto.ApiError), StatusCodes.Status409Conflict)]
         [ProducesResponseType(typeof(Dto.JwtToken), StatusCodes.Status201Created)]
         public async Task<IActionResult> Add([FromBody] Dto.UserInscription userInscription)
         {
@@ -42,7 +42,7 @@ namespace UrbanSisters.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            if(_context.User.FirstOrDefault(u => u.Email.Equals(userInscription.Email.ToLower())) != null)
+            if (_context.User.FirstOrDefault(u => u.Email.Equals(userInscription.Email.ToLower())) != null)
             {
                 return Conflict(ConflictErrorType.EmailAlreadyUsed);
             }
@@ -55,28 +55,7 @@ namespace UrbanSisters.Api.Controllers
 
             await _context.SaveChangesAsync();
             
-            IEnumerable<Claim> claims = new List<Claim>(new []
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Jti, await _jwtOptions.JtiGenerator()),
-                new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(_jwtOptions.IssuedAt).ToString(), ClaimValueTypes.Integer64)
-            });
-            
-            JwtSecurityToken token = new JwtSecurityToken(
-                issuer: _jwtOptions.Issuer,
-                audience: _jwtOptions.Audience,
-                claims: claims,
-                notBefore: _jwtOptions.NotBefore,
-                expires: _jwtOptions.Expiration,
-                signingCredentials: _jwtOptions.SigningCredentials
-            );
-
-            return Created("api/user/" + result.Entity.Id, new Dto.JwtToken{access_token = new JwtSecurityTokenHandler().WriteToken(token), expire_at = ((DateTimeOffset)_jwtOptions.Expiration).ToUnixTimeSeconds()});
-        }
-
-        private static long ToUnixEpochDate(DateTime date)
-        {
-            return (long)Math.Round((date.ToUniversalTime() - new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero)).TotalSeconds);
+            return Created("api/user/" + result.Entity.Id, await Utils.CreateTokenFor(user, _jwtOptions));
         }
     }
 }
