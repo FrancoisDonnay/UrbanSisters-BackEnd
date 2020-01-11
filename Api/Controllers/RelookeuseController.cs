@@ -55,7 +55,7 @@ namespace UrbanSisters.Api.Controllers
         // GET: /relookeuse
         [HttpGet("{id}")]
         [AllowAnonymous]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Dto.DetailedRelookeuse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetDetail(int id)
@@ -77,86 +77,70 @@ namespace UrbanSisters.Api.Controllers
             return Ok(_mapper.Map<Relookeuse, Dto.DetailedRelookeuse>(relookeuse));
         }
         
-        [HttpPost("picture/{id}")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        // GET: /relookeuse/me
+        [HttpGet("me")]
+        [Authorize(Roles = "relookeuse")]
+        [ProducesResponseType(typeof(Dto.Relookeuse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> UploadPicture(int id, [FromForm]Dto.Picture picture)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetMyDetails()
         {
-            if (id < 1)
+            Relookeuse relookeuse = await _context.Relookeuse.Where(rel => rel.UserId == int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value)).Include(relookeuse => relookeuse.User).Include(relookeuse => relookeuse.Appointment).OrderByDescending(relookeuse => relookeuse.Appointment.Sum(appointment => appointment.Mark)/relookeuse.Appointment.Count(appointment => appointment.Mark != null)).FirstOrDefaultAsync();
+            
+            if (relookeuse == null)
             {
-                return BadRequest();
+                return NotFound(int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value));
             }
             
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            Relookeuse relookeuse = await _context.Relookeuse.FirstOrDefaultAsync(r => r.UserId == id);
-            
-            if (relookeuse.Picture != null)
-            {
-                return BadRequest();
-            }
-            
-            BlobClient blobClient = _blobContainerClient.GetBlobClient(Guid.NewGuid()+ Path.GetExtension(picture.File.FileName));
-            
-            await using var stream = picture.File.OpenReadStream();
-            Task saveInCloudTask = blobClient.UploadAsync(stream);
-            
-            relookeuse.Picture = blobClient.Uri.ToString();
-            _context.Update(relookeuse);
-            Task saveDatabaseTask = _context.SaveChangesAsync();
-
-            await Task.WhenAll(saveInCloudTask, saveDatabaseTask);
-            
-            return Created(blobClient.Uri, new {userId = relookeuse.UserId, pictureUrl = blobClient.Uri});
+            return Ok(_mapper.Map<Relookeuse, Dto.Relookeuse>(relookeuse));
         }
         
-        [HttpPatch("picture/{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [HttpPatch("picture")]
+        [Authorize(Roles = "relookeuse")]
+        [ProducesResponseType(typeof(Dto.ProfilPicture), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> ReplacePicture(int id, [FromForm]Dto.Picture picture)
+        [ProducesResponseType(typeof(Dto.ApiError), StatusCodes.Status409Conflict)]
+        public async Task<IActionResult> ReplacePicture([FromForm]Dto.Picture picture)
         {
-            if (id < 1)
-            {
-                return BadRequest();
-            }
-
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            Relookeuse relookeuse = await _context.Relookeuse.FirstOrDefaultAsync(r => r.UserId == id);
-            
-            if (relookeuse.Picture == null)
-            {
-                return BadRequest();
-            }
-            
-            Task removeOldBlobTask = _blobContainerClient.GetBlobClient(relookeuse.Picture.Split("/").Last()).DeleteIfExistsAsync();
+            Relookeuse relookeuse = await _context.Relookeuse.FirstOrDefaultAsync(r => r.UserId == int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value));
+
+            string oldPicture = relookeuse.Picture;
             
             BlobClient blobClient = _blobContainerClient.GetBlobClient(Guid.NewGuid() + Path.GetExtension(picture.File.FileName));
             
-            await using var stream = picture.File.OpenReadStream();
-            Task saveInCloudTask = blobClient.UploadAsync(stream);
-
             relookeuse.Picture = blobClient.Uri.ToString();
-            _context.Update(relookeuse);
-            Task saveDatabaseTask = _context.SaveChangesAsync();
             
-            await Task.WhenAll(removeOldBlobTask, saveInCloudTask, saveDatabaseTask);
+            _context.Entry(relookeuse).OriginalValues["RowVersion"] = picture.RowVersion;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                
+                if (oldPicture != null)
+                {
+                    await _blobContainerClient.GetBlobClient(oldPicture.Split("/").Last()).DeleteIfExistsAsync();
+                }
+                await using var stream = picture.File.OpenReadStream();
+                await blobClient.UploadAsync(stream);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return Conflict(ConflictErrorType.RelookeuseNewlyModified);
+            }
             
-            return Ok(new {userId = relookeuse.UserId, pictureUrl = blobClient.Uri});
+            return Ok(new Dto.ProfilPicture{Url = blobClient.Uri.ToString(), RowVersion = relookeuse.RowVersion});
         }
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        [ProducesResponseType(typeof(Dto.JwtToken), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(Dto.NewRelookeuse), StatusCodes.Status201Created)]
         public async Task<IActionResult> NewInscription([FromBody] Dto.RelookeuseInscription relookeuseInscription)
         {
             if (!ModelState.IsValid)
@@ -177,9 +161,45 @@ namespace UrbanSisters.Api.Controllers
             await _context.AddAsync(relookeuse);
             await _context.SaveChangesAsync();
 
-            User user = await _context.User.FirstOrDefaultAsync(u => u.Id == userId);
+            relookeuse = await _context.Relookeuse.Include(rel => rel.User).FirstOrDefaultAsync(rel => rel.UserId == userId);
+
+            Dto.NewRelookeuse newRelookeuse = _mapper.Map<Dto.NewRelookeuse>(relookeuse);
+            newRelookeuse.NewToken = await Utils.CreateTokenFor(relookeuse.User, _jwtOptions);
             
-            return Created("api/relookeuse/" + userId, await Utils.CreateTokenFor(user, _jwtOptions));
+            return Created("api/relookeuse/" + userId, newRelookeuse);
+        }
+        
+        [HttpDelete("picture")]
+        [Authorize(Roles = "relookeuse")]
+        [ProducesResponseType(typeof(Dto.RelookeuseRowVersion), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(Dto.ApiError), StatusCodes.Status409Conflict)]
+        public async Task<IActionResult> DeletePicture([FromBody] Dto.RelookeuseRowVersion relRowVersion)
+        {
+            Relookeuse relookeuse = await _context.Relookeuse.FirstOrDefaultAsync(r => r.UserId == int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value));
+
+            string oldPicture = relookeuse.Picture;
+            
+            relookeuse.Picture = null;
+            
+            _context.Entry(relookeuse).OriginalValues["RowVersion"] = relRowVersion.RowVersion;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                
+                if (oldPicture != null)
+                {
+                    await _blobContainerClient.GetBlobClient(oldPicture.Split("/").Last()).DeleteIfExistsAsync();
+                }
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return Conflict(ConflictErrorType.RelookeuseNewlyModified);
+            }
+            
+            return Ok(new Dto.RelookeuseRowVersion{RowVersion = relookeuse.RowVersion});
         }
     }
 }
