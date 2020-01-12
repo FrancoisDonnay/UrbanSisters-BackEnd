@@ -42,6 +42,7 @@ namespace UrbanSisters.Api
                 mc.CreateMap<PortfolioPicture, Dto.PortfolioPicture>();
                 mc.CreateMap<Dto.RelookeuseInscription, Relookeuse>();
                 mc.CreateMap<Tarif, Dto.Tarif>();
+                mc.CreateMap<Dto.NewTarif, Tarif>();
                 mc.CreateMap<Relookeuse, Dto.NewRelookeuse>()
                     .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.UserId))
                     .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.User.FirstName))

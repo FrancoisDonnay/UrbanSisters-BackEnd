@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using UrbanSisters.Dal;
 using UrbanSisters.Model;
@@ -42,7 +43,7 @@ namespace UrbanSisters.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (_context.User.FirstOrDefault(u => u.Email.Equals(userInscription.Email.ToLower())) != null)
+            if (await _context.User.FirstOrDefaultAsync(u => u.Email.Equals(userInscription.Email.ToLower())) != null)
             {
                 return Conflict(ConflictErrorType.EmailAlreadyUsed);
             }
