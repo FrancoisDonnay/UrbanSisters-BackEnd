@@ -1,14 +1,9 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace UrbanSisters.Dto
 {
-    public class Availability
+    public class NewAvailability
     {
-        [Required]
-        [Range(1, Int32.MaxValue)]
-        public int Id { get; set; }
-        
         [Required]
         [Range(1, 7)]
         public int DayOfWeek { get; set; }
@@ -20,8 +15,5 @@ namespace UrbanSisters.Dto
         [Required]
         [RegularExpression("[0-1][0-9]:[0-5][0-9]")]
         public string EndTime { get; set; }
-        
-        [Required]
-        public byte[] RowVersion { get; set; }
     }
 }

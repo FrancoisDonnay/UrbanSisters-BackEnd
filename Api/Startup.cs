@@ -39,8 +39,10 @@ namespace UrbanSisters.Api
                 mc.CreateMap<Dto.UserInscription, User>();
                 mc.CreateMap<Tarif, Dto.Tarif>();
                 mc.CreateMap<Availability, Dto.Availability>();
+                mc.CreateMap<Dto.Availability, Availability>();
                 mc.CreateMap<PortfolioPicture, Dto.PortfolioPicture>();
                 mc.CreateMap<Dto.RelookeuseInscription, Relookeuse>();
+                mc.CreateMap<Dto.NewAvailability, Availability>();
                 mc.CreateMap<Tarif, Dto.Tarif>();
                 mc.CreateMap<Dto.NewTarif, Tarif>();
                 mc.CreateMap<Relookeuse, Dto.NewRelookeuse>()

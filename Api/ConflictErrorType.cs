@@ -9,5 +9,7 @@ namespace UrbanSisters.Api
         public static readonly ApiError RelookeuseNewlyModified = new ApiError{ErrorType = "RELOOKEUSE_NEWLY_MODIFIED"};
         public static readonly ApiError AppointmentAlreadyClose = new ApiError{ErrorType = "APPOINTMENT_ALREADY_CLOSE"};
         public static readonly ApiError AppointmentNewlyModified = new ApiError{ErrorType = "APPOINTMENT_NEWLY_MODIFIED"};
+        public static readonly ApiError AvailabilityAlreadyExist = new ApiError{ErrorType = "AVAILABILITY_ALREADY_EXIST"};
+        public static readonly ApiError AvailabilityNewlyModified = new ApiError{ErrorType = "AVAILABILITY_NEWLY_MODIFIED"};
     }
 }
