@@ -65,8 +65,7 @@ namespace UrbanSisters.Api
             }).CreateMapper());
             
             BlobServiceClient blobServiceClient = new BlobServiceClient(Configuration["BlobStorageConnectionString"]);
-            BlobContainerClient blobContainerClient = blobServiceClient.GetBlobContainerClient("profilepicture");
-            services.AddSingleton(blobContainerClient);
+            services.AddSingleton(blobServiceClient);
 
             SymmetricSecurityKey signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["SecretSignatureKey"]));
             

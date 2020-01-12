@@ -27,11 +27,11 @@ namespace UrbanSisters.Api.Controllers
         private readonly BlobContainerClient _blobContainerClient;
         private readonly JwtIssuerOptions _jwtOptions;
 
-        public RelookeuseController(UrbanSisterContext context, IMapper mapper, BlobContainerClient blobContainerClient, IOptions<JwtIssuerOptions> jwtOptions)
+        public RelookeuseController(UrbanSisterContext context, IMapper mapper, BlobServiceClient blobServiceClient, IOptions<JwtIssuerOptions> jwtOptions)
         {
             this._context = context;
             this._mapper = mapper;
-            this._blobContainerClient = blobContainerClient;
+            this._blobContainerClient = blobServiceClient.GetBlobContainerClient("profilepicture");
             this._jwtOptions = jwtOptions.Value;
         }
         
