@@ -9,11 +9,11 @@ namespace UrbanSisters.Dto
         public int DayOfWeek { get; set; }
         
         [Required]
-        [RegularExpression("[0-1][0-9]:[0-5][0-9]")]
+        [RegularExpression("[0-2][0-9]:[0-5][0-9]")]
         public string StartTime { get; set; }
         
         [Required]
-        [RegularExpression("[0-1][0-9]:[0-5][0-9]")]
+        [RegularExpression("[0-2][0-9]:[0-5][0-9]")]
         public string EndTime { get; set; }
     }
 }

@@ -34,7 +34,7 @@ namespace UrbanSisters.Api.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetMyAvailabilities()
         {
-            IEnumerable<Availability> availabilities = await _context.Availability.Where(av => av.RelookeuseId == int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value)).OrderBy(av=> av.StartTime).ToListAsync();
+            IEnumerable<Availability> availabilities = await _context.Availability.Where(av => av.RelookeuseId == int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value)).OrderBy(av => av.DayOfWeek).ThenBy(av=> av.StartTime).ToListAsync();
             return Ok(availabilities.Select(av => _mapper.Map<Dto.Availability>(av)));
         }
         
