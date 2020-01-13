@@ -52,6 +52,43 @@ namespace UrbanSisters.Api.Controllers
             return Ok(new Dto.Page<Dto.Relookeuse>{Items = relookeuseAtPage.Select(relookeuse => _mapper.Map<Relookeuse, Dto.Relookeuse>(relookeuse)), PageIndex = pageIndex.Value, PageSize = pageSize.Value, TotalCount = countTotalRelookeuse});
         }
         
+        [HttpPatch]
+        [Authorize(Roles = "relookeuse")]
+        [ProducesResponseType(typeof(Dto.RelookeuseRowVersion), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        public async Task<IActionResult> SetAdmin([FromBody] Dto.EditRelookeuse editRelookeuse)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            Relookeuse relookeuse = await _context.Relookeuse.FirstOrDefaultAsync(rel => rel.UserId == int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value));
+            
+            if (relookeuse == null)
+            {
+                return NotFound();
+            }
+
+            relookeuse.IsPro = editRelookeuse.IsPro;
+            relookeuse.Description = editRelookeuse.Description;
+
+            _context.Entry(relookeuse).OriginalValues["RowVersion"] = editRelookeuse.RowVersion;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return Conflict();
+            }
+
+            return Ok(new Dto.RelookeuseRowVersion(){RowVersion = relookeuse.RowVersion});
+        }
+        
         // GET: /relookeuse
         [HttpGet("{id}")]
         [AllowAnonymous]

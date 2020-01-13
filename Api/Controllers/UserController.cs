@@ -43,18 +43,58 @@ namespace UrbanSisters.Api.Controllers
             
             return Ok(_mapper.Map<Dto.User>(user));
         }
-
-        // GET: /user
+        
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<Dto.User>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> Get()
+        [ProducesResponseType(typeof(Dto.Page<Dto.User>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Get(int? pageIndex = 0, int? pageSize = 5)
         {
-            User[] list = await _context.User.Include(user => user.Relookeuse).ToArrayAsync();
+            if (pageIndex.Value < 0 || pageSize.Value < 0)
+            {
+                return BadRequest();
+            }
             
-            return Ok(list.Select(user => _mapper.Map<Dto.User>(user)));
+            IEnumerable<User> usersAtPage = await _context.User.Include(u => u.Relookeuse).Skip(pageIndex.Value* pageSize.Value).Take(pageSize.Value).ToArrayAsync();
+            int countTotalUsers = await _context.User.CountAsync();
+
+            return Ok(new Dto.Page<Dto.User>{Items = usersAtPage.Select(u => _mapper.Map<User, Dto.User>(u)), PageIndex = pageIndex.Value, PageSize = pageSize.Value, TotalCount = countTotalUsers});
+        }
+        
+        [HttpPatch("admin")]
+        [Authorize(Roles = "admin")]
+        [ProducesResponseType(typeof(Dto.UserRowVersion), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        public async Task<IActionResult> SetAdmin([FromBody] Dto.SetAdminValue setAdminValue)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            User user = await _context.User.FirstOrDefaultAsync(u => u.Id == setAdminValue.Id);
+
+            if (user == null)
+            {
+                return NotFound(setAdminValue.Id);
+            }
+
+            user.IsAdmin = setAdminValue.IsAdmin;
+            
+            _context.Entry(user).OriginalValues["RowVersion"] = setAdminValue.RowVersion;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return Conflict();
+            }
+
+            return Ok(new Dto.UserRowVersion(){RowVersion = user.RowVersion});
         }
         
         //PATCH: /user

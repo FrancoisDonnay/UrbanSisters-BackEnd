@@ -43,7 +43,7 @@ namespace UrbanSisters.Api.Controllers
         }
         
         [HttpPost]
-        [ProducesResponseType(typeof(Dto.ProfilPicture), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(Dto.PortfolioPicture), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(Dto.ApiError), StatusCodes.Status409Conflict)]
