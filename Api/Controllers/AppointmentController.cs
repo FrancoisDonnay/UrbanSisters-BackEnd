@@ -90,7 +90,7 @@ namespace UrbanSisters.Api.Controllers
                 return BadRequest(ModelState);
             }
             
-            if (await _context.Appointment.CountAsync(ap => (!ap.Accepted || !ap.Finished) && ap.RelookeuseId == appointmentRequest.RelookeuseId && ap.UserId == int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value)) > 0)
+            if (await _context.Appointment.CountAsync(ap => !ap.Finished && ap.RelookeuseId == appointmentRequest.RelookeuseId && ap.UserId == int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value)) > 0)
             {
                 return Conflict();
             }
