@@ -10,8 +10,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UrbanSisters.Dal;
-using UrbanSisters.Model;
 using Appointment = UrbanSisters.Model.Appointment;
+using Relookeuse = UrbanSisters.Model.Relookeuse;
 
 namespace UrbanSisters.Api.Controllers
 {
@@ -28,24 +28,53 @@ namespace UrbanSisters.Api.Controllers
             this._context = context;
             this._mapper = mapper;
         }
-        
+
         // GET: /appointment
         [HttpGet]
-        [ProducesResponseType(typeof(Dto.Page<Dto.Appointment>),StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Dto.Page<Dto.Appointment>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> Get(int? pageIndex = 0, int? pageSize = 5, bool? pro = false)
+        public async Task<IActionResult> Get(int? pageIndex = 0, int? pageSize = 5)
+        {
+            if (pageIndex.Value < 0 || pageSize.Value < 0)
+            {
+                return BadRequest();
+            }
+
+            IEnumerable<Appointment> appointments = await _context.Appointment
+                .Where(appointment => appointment.UserId == int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                .Include(appointment => appointment.Relookeuse).Include(appointment => appointment.Relookeuse.User)
+                .OrderByDescending(appointment => appointment.Date).Skip(pageIndex.Value * pageSize.Value)
+                .Take(pageSize.Value).ToArrayAsync();
+
+            int countTotalAppointment = await _context.Appointment.Where(appointment =>
+                appointment.UserId == int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value)).CountAsync();
+
+            return Ok(new Dto.Page<Dto.Appointment>
+            {
+                Items = appointments.Select(appointment => _mapper.Map<Appointment, Dto.Appointment>(appointment)),
+                PageIndex = pageIndex.Value, PageSize = pageSize.Value, TotalCount = countTotalAppointment
+            });
+        }
+
+        // GET: /appointment/pro
+        [HttpGet("pro")]
+        [Authorize(Roles = "relookeuse")]
+        [ProducesResponseType(typeof(Dto.Page<Dto.AppointmentPro>),StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetPro(int? pageIndex = 0, int? pageSize = 5)
         {
             if (pageIndex.Value < 0 || pageSize.Value < 0)
             {
                 return BadRequest();
             }
             
-            IEnumerable<Appointment> appointments = await _context.Appointment.Where(appointment => appointment.UserId == int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value)).Include(appointment => appointment.Relookeuse).Include(appointment => appointment.Relookeuse.User).OrderByDescending(appointment => appointment.Date).Skip(pageIndex.Value* pageSize.Value).Take(pageSize.Value).ToArrayAsync();
+            IEnumerable<Appointment> appointments = await _context.Appointment.Where(appointment => appointment.RelookeuseId == int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value)).Include(appointment => appointment.User).OrderByDescending(appointment => appointment.Date).Skip(pageIndex.Value* pageSize.Value).Take(pageSize.Value).ToArrayAsync();
             
-            int countTotalAppointment = await _context.Appointment.CountAsync();
+            int countTotalAppointment = await _context.Appointment.Where(appointment => appointment.RelookeuseId == int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value)).CountAsync();
 
-            return Ok(new Dto.Page<Dto.Appointment>{Items = appointments.Select(appointment => _mapper.Map<Appointment, Dto.Appointment>(appointment)), PageIndex = pageIndex.Value, PageSize = pageSize.Value, TotalCount = countTotalAppointment});
+            return Ok(new Dto.Page<Dto.AppointmentPro>{Items = appointments.Select(appointment => _mapper.Map<Appointment, Dto.AppointmentPro>(appointment)), PageIndex = pageIndex.Value, PageSize = pageSize.Value, TotalCount = countTotalAppointment});
         }
         
         [HttpPost]
@@ -137,6 +166,57 @@ namespace UrbanSisters.Api.Controllers
             }
 
             return NoContent();
+        }
+        
+        [HttpPatch("{id}")]
+        [Authorize(Roles = "relookeuse")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(Dto.AppointmentRowVersion), StatusCodes.Status200OK)]
+        public async Task<IActionResult> SetAcceptedStatus(int id, [FromBody] Dto.AppointmentStatusChange appointmentStatusChange)
+        {
+            if (!ModelState.IsValid || (!appointmentStatusChange.Accepted && appointmentStatusChange.CancelMessage == null))
+            {
+                return BadRequest(ModelState);
+            }
+
+            Appointment appointment = await _context.Appointment.FirstOrDefaultAsync(ap => ap.Id == id && ap.RelookeuseId == int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value));
+
+            if (appointment == null)
+            {
+                return NotFound();
+            }
+
+            if (appointment.Finished)
+            {
+                return Conflict();
+            }
+
+            if (!appointmentStatusChange.Accepted)
+            {
+                appointment.CancelRaison = appointmentStatusChange.CancelMessage;
+                appointment.Finished = true;
+            }
+            else
+            {
+                appointment.Accepted = true;
+            }
+            
+            _context.Entry(appointment).OriginalValues["RowVersion"] = appointmentStatusChange.RowVersion;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return Conflict();
+            }
+
+            return Ok(new Dto.AppointmentRowVersion(){RowVersion = appointment.RowVersion});
         }
     }
 }

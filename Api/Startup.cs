@@ -52,6 +52,9 @@ namespace UrbanSisters.Api
                 mc.CreateMap<Appointment, Dto.Appointment>()
                     .ForMember(dest => dest.RelookeuseFirstName, opt => opt.MapFrom(src => src.Relookeuse.User.FirstName))
                     .ForMember(dest => dest.RelookeuseLastName, opt => opt.MapFrom(src => src.Relookeuse.User.LastName));
+                mc.CreateMap<Appointment, Dto.AppointmentPro>()
+                    .ForMember(dest => dest.UserFirstName, opt => opt.MapFrom(src => src.User.FirstName))
+                    .ForMember(dest => dest.UserLastName, opt => opt.MapFrom(src => src.User.LastName));
                 mc.CreateMap<Relookeuse, Dto.Relookeuse>()
                     .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.UserId))
                     .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.User.FirstName))
