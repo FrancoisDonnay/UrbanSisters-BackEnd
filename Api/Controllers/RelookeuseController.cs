@@ -187,7 +187,7 @@ namespace UrbanSisters.Api.Controllers
 
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             
-            if(_context.Relookeuse.FirstOrDefault(rel => rel.UserId == userId) != null)
+            if(await _context.Relookeuse.FirstOrDefaultAsync(rel => rel.UserId == userId) != null)
             {
                 return Conflict();
             }
