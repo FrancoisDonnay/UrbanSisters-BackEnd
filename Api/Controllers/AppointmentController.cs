@@ -128,7 +128,7 @@ namespace UrbanSisters.Api.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<IActionResult> Get(int id, [FromBody] Dto.Rating ratingRequest)
+        public async Task<IActionResult> Close(int id, [FromBody] Dto.Rating ratingRequest)
         {
             if (!ModelState.IsValid)
             {
