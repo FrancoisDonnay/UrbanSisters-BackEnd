@@ -42,7 +42,7 @@ namespace UrbanSisters.Api.Controllers
             }
 
             PasswordHasher<User> passwordHasher = new PasswordHasher<User>();
-            User user = _context.User.Include(u => u.Relookeuse).FirstOrDefault(person => person.Email.Equals(loginModel.Email.ToLower()));
+            User user = await _context.User.Include(u => u.Relookeuse).FirstOrDefaultAsync(person => person.Email.Equals(loginModel.Email.ToLower()));
 
             if (user == null || passwordHasher.VerifyHashedPassword(user, user.Password, loginModel.Password).Equals(PasswordVerificationResult.Failed))
             {
