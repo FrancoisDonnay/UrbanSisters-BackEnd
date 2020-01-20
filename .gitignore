@@ -16,3 +16,4 @@
 .idea/.idea.UrbanSisters
 /.idea/
 /Api/Api.csproj.user
+/Api/appsettings.json
